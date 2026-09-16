@@ -23,6 +23,7 @@
             left: 0;
             overflow: hidden;
             transform-origin: center center;
+            will-change: transform;
         }
 
         .game-bg {
@@ -120,17 +121,32 @@
             100% { width: 600px; height: 600px; opacity: 0; }
         }
 
-        /* Fixed Zoom Shake Animation */
+        /* Fixed "Close In" Zoom Shake Animation */
         .shake {
-            animation: zoom-shake-anim 0.2s cubic-bezier(.36,.07,.19,.97) both;
+            animation: zoom-shake-anim 0.25s ease-out;
         }
 
         @keyframes zoom-shake-anim {
             0% { transform: scale(1); }
-            25% { transform: scale(calc(0.9 - (0.1 * var(--shake-power)))); }
-            50% { transform: scale(calc(1.1 + (0.1 * var(--shake-power)))); }
-            75% { transform: scale(calc(0.95 - (0.05 * var(--shake-power)))); }
+            30% { transform: scale(calc(1.1 + (0.1 * var(--shake-power)))); }
+            60% { transform: scale(calc(0.9 - (0.1 * var(--shake-power)))); }
             100% { transform: scale(1); }
+        }
+
+        .hit-flash {
+            position: fixed;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1000;
+            animation: flash-anim 0.2s ease-out forwards;
+        }
+
+        @keyframes flash-anim {
+            0% { opacity: 0; }
+            20% { opacity: 0.3; }
+            100% { opacity: 0; }
         }
 
         .fade-out {
@@ -403,7 +419,6 @@
                 const progress = elapsed / targetQTE.duration;
                 const currentSize = 250 - (200 * progress);
 
-                // Hitbox: Ring must be between 100px (inner target) and 130px (outer hit-zone)
                 if (currentSize <= 130 && currentSize >= 100) {
                     handleHit(targetQTE);
                 } else {
