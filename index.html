@@ -121,18 +121,6 @@
             100% { width: 600px; height: 600px; opacity: 0; }
         }
 
-        /* FIXED Zoom Shake Animation */
-        .shake {
-            animation: zoom-shake-anim 0.25s ease-out forwards;
-        }
-
-        @keyframes zoom-shake-anim {
-            0% { transform: scale(1); }
-            30% { transform: scale(var(--scale-min)); }
-            60% { transform: scale(var(--scale-max)); }
-            100% { transform: scale(1); }
-        }
-
         .fade-out {
             animation: fadeOut 0.3s forwards;
         }
@@ -484,32 +472,21 @@
         }
 
         function triggerShake(power) {
-            // Calculate scale values based on power
-            const minScale = 1 - (0.1 * power);
-            const maxScale = 1 + (0.1 * power);
+            // Using Web Animations API for guaranteed execution and precision
+            const minScale = 1 - (0.15 * power);
+            const maxScale = 1 + (0.15 * power);
 
-            el.gameWorld.style.setProperty('--scale-min', minScale);
-            el.gameWorld.style.setProperty('--scale-max', maxScale);
-
-            // Use a slightly different animation name to ensure it re-triggers
-            el.gameWorld.classList.remove('shake');
-            void el.gameWorld.offsetWidth; // Trigger reflow
-            el.gameWorld.classList.add('shake');
-
-            setTimeout(() => el.gameWorld.classList.remove('shake'), 250);
+            el.gameWorld.animate([
+                { transform: 'scale(1)' },
+                { transform: `scale(${minScale})` },
+                { transform: `scale(${maxScale})` },
+                { transform: `scale(${minScale})` },
+                { transform: 'scale(1)' }
+            ], {
+                duration: 250,
+                easing: 'ease-out'
+            });
         }
-
-        // Update the CSS animation to use the JS-calculated variables
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes zoom-shake-anim {
-                0% { transform: scale(1); }
-                30% { transform: scale(var(--scale-min)); }
-                60% { transform: scale(var(--scale-max)); }
-                100% { transform: scale(1); }
-            }
-        `;
-        document.head.appendChild(style);
 
         function handleHit(qteData) {
             triggerShake(state.hitShakePower);
