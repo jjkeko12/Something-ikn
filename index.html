@@ -459,13 +459,22 @@
         };
 
         window.addEventListener('pointerdown', (e) => {
-            if (!state.playing) return;
+            if (!state.playing || state.activeQTEs.length === 0) return;
 
-            // Prevent triggering if clicking UI elements (though menu is hidden,
-            // we check for playing state)
-            if (state.activeQTEs.length > 0) {
-                // On mobile/tap, we assume they are trying to hit the target key
-                processInput(state.activeQTEs[0].key);
+            const targetQTE = state.activeQTEs[0];
+            const rect = targetQTE.element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const dist = Math.hypot(e.clientX - centerX, e.clientY - centerY);
+
+            // hit-zone is 130px diameter (65px radius).
+            // We allow a bit more leeway for mobile (approx 80px)
+            if (dist < 80) {
+                processInput(targetQTE.key);
+            } else {
+                // Tapping far away is treated as a miss
+                processInput('MISS');
             }
         });
 
