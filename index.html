@@ -127,8 +127,8 @@
 
         @keyframes zoom-pulse {
             0% { transform: scale(1); }
-            30% { transform: scale(0.85); }
-            60% { transform: scale(1.15); }
+            30% { transform: scale(var(--scale-min, 0.85)); }
+            60% { transform: scale(var(--scale-max, 1.15)); }
             100% { transform: scale(1); }
         }
 
@@ -449,7 +449,7 @@
             qte.appendChild(hitZone);
             qte.appendChild(target);
             qte.appendChild(ring);
-            document.body.appendChild(qte);
+            el.gameWorld.appendChild(qte);
 
             const qteData = {
                 element: qte,
@@ -491,11 +491,11 @@
             el.gameWorld.style.setProperty('--scale-max', maxScale);
 
             // Force restart the animation
-            el.gameWorld.classList.remove('shake');
+            el.gameWorld.classList.remove('shake-active');
             void el.gameWorld.offsetWidth;
-            el.gameWorld.classList.add('shake');
+            el.gameWorld.classList.add('shake-active');
 
-            setTimeout(() => el.gameWorld.classList.remove('shake'), 250);
+            setTimeout(() => el.gameWorld.classList.remove('shake-active'), 250);
         }
 
         function handleHit(qteData) {
