@@ -13,8 +13,6 @@
             margin: 0;
             overflow: hidden;
             background: #000;
-            /* Transition for the overall game world blur */
-            transition: filter 0.5s ease;
         }
 
         #game-world {
@@ -34,6 +32,7 @@
             background-position: center;
             z-index: -1;
             background-color: #000;
+            transition: filter 0.5s ease;
         }
 
         .qte-circle {
@@ -118,17 +117,17 @@
             100% { width: 600px; height: 600px; opacity: 0; }
         }
 
-        /* Extreme Shake applied to body - Fixed elements (HUD) won't move */
+        /* Zoom/Pulse Shake: Closing in and going out */
         .shake {
-            animation: shake-anim 0.2s cubic-bezier(.36,.07,.19,.97) both;
+            animation: zoom-shake-anim 0.2s cubic-bezier(.36,.07,.19,.97) both;
         }
 
-        @keyframes shake-anim {
-            10%, 90% { transform: translate(calc(-10px * var(--shake-power)), calc(-5px * var(--shake-power))); }
-            20%, 80% { transform: translate(calc(20px * var(--shake-power)), calc(10px * var(--shake-power))); }
-            30%, 70% { transform: translate(calc(-20px * var(--shake-power)), calc(-10px * var(--shake-power))); }
-            40%, 60% { transform: translate(calc(20px * var(--shake-power)), calc(10px * var(--shake-power))); }
-            100% { transform: translate(0, 0); }
+        @keyframes zoom-shake-anim {
+            0% { transform: scale(1); }
+            25% { transform: scale(calc(0.95 - (0.05 * var(--shake-power)))); }
+            50% { transform: scale(calc(1.05 + (0.05 * var(--shake-power)))); }
+            75% { transform: scale(calc(0.98 - (0.02 * var(--shake-power)))); }
+            100% { transform: scale(1); }
         }
 
         .fade-out {
@@ -351,7 +350,7 @@
                 el.bg.style.backgroundColor = '#000';
             }
 
-            document.body.style.filter = `blur(${state.blur}px)`;
+            el.bg.style.filter = `blur(${state.blur}px)`;
             el.menu.classList.add('hidden');
             el.hud.classList.remove('hidden');
             el.maxMissText.innerText = state.maxMisses;
@@ -369,7 +368,7 @@
             el.gameOver.classList.add('hidden');
             el.menu.classList.remove('hidden');
             el.hud.classList.add('hidden');
-            document.body.style.filter = 'none';
+            el.bg.style.filter = 'none';
         };
 
         el.quickRestartBtn.onclick = quickRestart;
@@ -401,7 +400,9 @@
                 const progress = elapsed / targetQTE.duration;
                 const currentSize = 250 - (200 * progress);
 
-                if (currentSize <= 130 && currentSize >= 70) {
+                // Hitbox: between the shrinking ring and the target perimeter
+                // Target size is 100px. We consider it a hit if the ring is close to 100px.
+                if (currentSize <= 115 && currentSize >= 85) {
                     handleHit(targetQTE);
                 } else {
                     handleMiss(targetQTE);
@@ -482,9 +483,9 @@
         }
 
         function triggerShake(power) {
-            document.body.style.setProperty('--shake-power', power);
-            document.body.classList.add('shake');
-            setTimeout(() => document.body.classList.remove('shake'), 200);
+            el.gameWorld.style.setProperty('--shake-power', power);
+            el.gameWorld.classList.add('shake');
+            setTimeout(() => el.gameWorld.classList.remove('shake'), 200);
         }
 
         function handleHit(qteData) {
