@@ -222,14 +222,14 @@
 
         const CONFIGS = [
             { id: 'bg', label: 'Background Image URL', type: 'text', default: '', placeholder: 'https://...' },
-            { id: 'speed', label: 'Game Speed', type: 'range', min: 0.5, max: 5, step: 0.1, default: 1, unit: 'x' },
-            { id: 'overlap', label: 'Overlap Delay', type: 'range', min: 0, max: 5, step: 0.1, default: 2, unit: 's' },
-            { id: 'hitShake', label: 'Hit Shake', type: 'range', min: 0, max: 5, step: 0.1, default: 1.5, unit: '', color: 'accent-green-600' },
-            { id: 'missShake', label: 'Miss Shake', type: 'range', min: 0, max: 5, step: 0.1, default: 0.8, unit: '', color: 'accent-red-600' },
+            { id: 'speed', label: 'Game Speed', type: 'range', min: 0.5, max: 5, step: 0.1, default: 1.8, unit: 'x' },
+            { id: 'overlap', label: 'Overlap Delay', type: 'range', min: 0, max: 5, step: 0.1, default: 1, unit: 's' },
+            { id: 'hitShake', label: 'Hit Shake', type: 'range', min: 0, max: 5, step: 0.1, default: 0.1, unit: '', color: 'accent-green-600' },
+            { id: 'missShake', label: 'Miss Shake', type: 'range', min: 0, max: 5, step: 0.1, default: 0.1, unit: '', color: 'accent-red-600' },
             { id: 'blur', label: 'Background Blur', type: 'range', min: 0, max: 20, step: 1, default: 5, unit: 'px' },
             { id: 'misses', label: 'Allowed Misses', type: 'number', default: 3, min: 1 },
-            { id: 'menuColor', label: 'Menu BG Color', type: 'color', default: '#ffffff' },
-            { id: 'menuBorder', label: 'Menu Border Color', type: 'color', default: '#4f46e5' },
+            { id: 'menuColor', label: 'Menu BG Color', type: 'color', default: '#000000' },
+            { id: 'menuBorder', label: 'Menu Border Color', type: 'color', default: '#1105f5' },
         ];
 
         function applyMenuStyles() {
@@ -299,28 +299,66 @@
                 if (conf.type === 'text') {
                     input.className = 'w-full p-2 border rounded-lg outline-none focus:ring-2 ring-indigo-500';
                     input.placeholder = conf.placeholder;
+                    input.onfocus = () => input.select();
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(input);
                 } else if (conf.type === 'range') {
+                    const inputGroup = document.createElement('div');
+                    inputGroup.className = 'flex items-center gap-3';
+
                     input.type = 'range';
                     input.min = conf.min;
                     input.max = conf.max;
                     input.step = conf.step;
-                    input.className = `w-full ${conf.color || 'accent-indigo-600'}`;
-                    input.oninput = () => {
+                    input.value = conf.default;
+                    input.className = `flex-grow ${conf.color || 'accent-indigo-600'}`;
+
+                    const numInput = document.createElement('input');
+                    numInput.type = 'number';
+                    numInput.min = conf.min;
+                    numInput.max = conf.max;
+                    numInput.step = conf.step;
+                    numInput.value = conf.default;
+                    numInput.className = 'w-20 p-1 border rounded-lg text-center outline-none focus:ring-2 ring-indigo-500';
+                    numInput.onfocus = () => numInput.select();
+
+                    const updateAll = (val, source) => {
+                        let numericVal = parseFloat(val);
+                        if (isNaN(numericVal)) return;
+
+                        // Clamp value to min/max
+                        numericVal = Math.max(conf.min, Math.min(conf.max, numericVal));
+                        const formattedVal = numericVal.toFixed(conf.step === 0.1 ? 1 : 0);
+
                         const valEl = document.getElementById(`val-${conf.id}`);
-                        if (valEl) valEl.innerText = input.value;
+                        if (valEl) valEl.innerText = formattedVal;
+
+                        if (source !== 'range') input.value = formattedVal;
+                        if (source !== 'number') numInput.value = formattedVal;
                     };
+
+                    input.oninput = () => updateAll(input.value, 'range');
+                    numInput.oninput = () => updateAll(numInput.value, 'number');
+
+                    inputGroup.appendChild(input);
+                    inputGroup.appendChild(numInput);
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(inputGroup);
                 } else if (conf.type === 'number') {
                     input.type = 'number';
                     input.min = conf.min;
                     input.className = 'w-full p-2 border rounded-lg outline-none focus:ring-2 ring-indigo-500';
+                    input.onfocus = () => input.select();
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(input);
                 } else if (conf.type === 'color') {
                     input.type = 'color';
                     input.className = 'w-full h-10 p-1 border rounded-lg cursor-pointer';
                     input.oninput = applyMenuStyles;
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(input);
                 }
 
-                wrapper.appendChild(label);
-                wrapper.appendChild(input);
                 el.menuSettings.appendChild(wrapper);
             });
             applyMenuStyles();
@@ -367,6 +405,7 @@
         };
 
         el.restartBtn.onclick = () => {
+            clearBoard();
             el.gameOver.classList.add('hidden');
             el.menu.classList.remove('hidden');
             el.hud.classList.add('hidden');
@@ -380,7 +419,7 @@
             el.missText.innerText = state.misses;
             el.gameOver.classList.add('hidden');
             state.playing = true;
-            state.activeQTEs = [];
+            clearBoard();
             state.lastSpawnTime = Date.now();
             spawnQTE();
             gameLoop();
@@ -534,8 +573,14 @@
             }
         }
 
+        function clearBoard() {
+            document.querySelectorAll('.qte-circle').forEach(q => q.remove());
+            state.activeQTEs = [];
+        }
+
         function endGame() {
             state.playing = false;
+            clearBoard();
             el.gameOver.classList.remove('hidden');
         }
 
