@@ -121,32 +121,16 @@
             100% { width: 600px; height: 600px; opacity: 0; }
         }
 
-        /* Fixed "Close In" Zoom Shake Animation */
+        /* FIXED Zoom Shake Animation */
         .shake {
-            animation: zoom-shake-anim 0.25s ease-out;
+            animation: zoom-shake-anim 0.25s ease-out forwards;
         }
 
         @keyframes zoom-shake-anim {
             0% { transform: scale(1); }
-            30% { transform: scale(calc(1.1 + (0.1 * var(--shake-power)))); }
-            60% { transform: scale(calc(0.9 - (0.1 * var(--shake-power)))); }
+            30% { transform: scale(var(--scale-min)); }
+            60% { transform: scale(var(--scale-max)); }
             100% { transform: scale(1); }
-        }
-
-        .hit-flash {
-            position: fixed;
-            inset: 0;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 1000;
-            animation: flash-anim 0.2s ease-out forwards;
-        }
-
-        @keyframes flash-anim {
-            0% { opacity: 0; }
-            20% { opacity: 0.3; }
-            100% { opacity: 0; }
         }
 
         .fade-out {
@@ -500,10 +484,32 @@
         }
 
         function triggerShake(power) {
-            el.gameWorld.style.setProperty('--shake-power', power);
+            // Calculate scale values based on power
+            const minScale = 1 - (0.1 * power);
+            const maxScale = 1 + (0.1 * power);
+
+            el.gameWorld.style.setProperty('--scale-min', minScale);
+            el.gameWorld.style.setProperty('--scale-max', maxScale);
+
+            // Use a slightly different animation name to ensure it re-triggers
+            el.gameWorld.classList.remove('shake');
+            void el.gameWorld.offsetWidth; // Trigger reflow
             el.gameWorld.classList.add('shake');
-            setTimeout(() => el.gameWorld.classList.remove('shake'), 200);
+
+            setTimeout(() => el.gameWorld.classList.remove('shake'), 250);
         }
+
+        // Update the CSS animation to use the JS-calculated variables
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes zoom-shake-anim {
+                0% { transform: scale(1); }
+                30% { transform: scale(var(--scale-min)); }
+                60% { transform: scale(var(--scale-max)); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
 
         function handleHit(qteData) {
             triggerShake(state.hitShakePower);
