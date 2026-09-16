@@ -13,6 +13,9 @@
             margin: 0;
             overflow: hidden;
             background: #000;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         #game-world {
@@ -425,18 +428,13 @@
             gameLoop();
         }
 
-        window.onkeydown = (e) => {
-            if (e.key === 'Enter' && !el.gameOver.classList.contains('hidden')) {
-                quickRestart();
-                return;
-            }
-
+        function processInput(pressedKey) {
             if (!state.playing || state.activeQTEs.length === 0) return;
 
-            const pressedKey = e.key.toUpperCase();
             const targetQTE = state.activeQTEs[0];
+            const inputKey = pressedKey.toUpperCase();
 
-            if (pressedKey === targetQTE.key) {
+            if (inputKey === targetQTE.key) {
                 const elapsed = Date.now() - targetQTE.startTime;
                 const progress = elapsed / targetQTE.duration;
                 const currentSize = 250 - (200 * progress);
@@ -449,7 +447,27 @@
             } else {
                 handleMiss(targetQTE);
             }
+        }
+
+        window.onkeydown = (e) => {
+            if (e.key === 'Enter' && !el.gameOver.classList.contains('hidden')) {
+                quickRestart();
+                return;
+            }
+
+            processInput(e.key);
         };
+
+        window.addEventListener('pointerdown', (e) => {
+            if (!state.playing) return;
+
+            // Prevent triggering if clicking UI elements (though menu is hidden,
+            // we check for playing state)
+            if (state.activeQTEs.length > 0) {
+                // On mobile/tap, we assume they are trying to hit the target key
+                processInput(state.activeQTEs[0].key);
+            }
+        });
 
         function gameLoop() {
             if (!state.playing) return;
