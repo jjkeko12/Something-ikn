@@ -23,7 +23,6 @@
             left: 0;
             overflow: hidden;
             transform-origin: center center;
-            will-change: transform;
         }
 
         .game-bg {
@@ -119,6 +118,18 @@
             0% { width: 0; height: 0; opacity: 0.8; }
             20% { width: 150px; height: 150px; opacity: 0.6; }
             100% { width: 600px; height: 600px; opacity: 0; }
+        }
+
+        /* THE "CLOSE IN" SHAKE EFFECT */
+        .shake-active {
+            animation: zoom-pulse 0.2s ease-out;
+        }
+
+        @keyframes zoom-pulse {
+            0% { transform: scale(1); }
+            30% { transform: scale(0.85); }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); }
         }
 
         .fade-out {
@@ -472,20 +483,19 @@
         }
 
         function triggerShake(power) {
-            // Using Web Animations API for guaranteed execution and precision
-            const minScale = 1 - (0.15 * power);
-            const maxScale = 1 + (0.15 * power);
+            // Dynamic values for the CSS variables
+            const minScale = 1 - (0.1 * power);
+            const maxScale = 1 + (0.1 * power);
 
-            el.gameWorld.animate([
-                { transform: 'scale(1)' },
-                { transform: `scale(${minScale})` },
-                { transform: `scale(${maxScale})` },
-                { transform: `scale(${minScale})` },
-                { transform: 'scale(1)' }
-            ], {
-                duration: 250,
-                easing: 'ease-out'
-            });
+            el.gameWorld.style.setProperty('--scale-min', minScale);
+            el.gameWorld.style.setProperty('--scale-max', maxScale);
+
+            // Force restart the animation
+            el.gameWorld.classList.remove('shake');
+            void el.gameWorld.offsetWidth;
+            el.gameWorld.classList.add('shake');
+
+            setTimeout(() => el.gameWorld.classList.remove('shake'), 250);
         }
 
         function handleHit(qteData) {
