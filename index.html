@@ -13,9 +13,6 @@
             margin: 0;
             overflow: hidden;
             background: #000;
-            touch-action: manipulation;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
         #game-world {
@@ -89,62 +86,67 @@
             pointer-events: none;
         }
 
-        /* BAR MODE STYLES */
+        /* BAR MODE STYLES (Inspired by Chain/Roblox) */
         .bar-container {
             position: absolute;
-            bottom: 15%;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 30px;
             z-index: 50;
         }
 
         .key-display {
-            background: rgba(255, 255, 255, 0.9);
-            color: #000;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
             font-weight: 900;
-            font-size: 3rem;
-            width: 80px;
-            height: 80px;
-            border: 4px solid #4f46e5;
-            border-radius: 15px;
+            font-size: 4rem;
+            width: 120px;
+            height: 120px;
+            border: 6px solid #fff;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
         .bar-track {
-            width: 40px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 20px;
+            width: 60px;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 0 20px #000;
         }
 
         .bar-marker {
             position: absolute;
             left: 0;
             width: 100%;
-            height: 10px;
+            height: 12px;
             background: #fff;
-            box-shadow: 0 0 10px #fff;
+            box-shadow: 0 0 15px #fff, 0 0 30px #fff;
             z-index: 10;
+            border-radius: 2px;
         }
 
         .bar-hit-zone {
             position: absolute;
             left: 0;
             width: 100%;
-            background: rgba(74, 222, 128, 0.5);
-            border-top: 2px solid #4ade80;
-            border-bottom: 2px solid #4ade80;
+            background: rgba(74, 222, 128, 0.6);
+            border-top: 4px solid #4ade80;
+            border-bottom: 4px solid #4ade80;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
             pointer-events: none;
+            z-index: 5;
         }
 
         /* COMMON EFFECTS */
@@ -260,7 +262,7 @@
             missShakePower: 0.8,
             blur: 5,
             bgUrl: '',
-            mode: 'circle', // 'circle' or 'bar'
+            mode: 'circle',
             activeQTEs: [],
             lastSpawnTime: 0,
             menuColor: '#ffffff',
@@ -367,7 +369,6 @@
                     input.type = 'color'; input.className = 'w-full h-10 p-1 border rounded-lg cursor-pointer';
                     input.oninput = applyMenuStyles;
                 } else if (conf.type === 'select') {
-                    input.className = 'w-full p-2 border rounded-lg outline-none focus:ring-2 ring-indigo-500 bg-white';
                     const select = document.createElement('select');
                     select.id = `cfg-${conf.id}`;
                     select.className = 'w-full p-2 border rounded-lg outline-none focus:ring-2 ring-indigo-500 bg-white';
@@ -449,17 +450,16 @@
             const targetQTE = state.activeQTEs[0];
             if (pressedKey === targetQTE.key) {
                 if (state.mode === 'circle') {
-                    const elapsed = Date.now() - targetQTE.startTime;
-                    const progress = elapsed / targetQTE.duration;
+                    const elapsed = Date, progress = elapsed / targetQTE.duration;
                     const currentSize = 250 - (200 * progress);
                     if (currentSize <= 130 && currentSize >= 100) handleHit(targetQTE);
                     else handleMiss(targetQTE);
                 } else {
                     const elapsed = Date.now() - targetQTE.startTime;
                     const progress = elapsed / targetQTE.duration;
-                    const markerPos = progress * 300;
-                    const hitZoneTop = 240;
-                    const hitZoneBottom = 280;
+                    const markerPos = progress * 400;
+                    const hitZoneTop = 340;
+                    const hitZoneBottom = 380;
                     if (markerPos >= hitZoneTop && markerPos <= hitZoneBottom) handleHit(targetQTE);
                     else handleMiss(targetQTE);
                 }
@@ -516,11 +516,12 @@
                 keyDisp.innerText = randomLetter;
                 const track = document.createElement('div');
                 track.className = 'bar-track';
+                track.style.height = '400px';
                 const marker = document.createElement('div');
                 marker.className = 'bar-marker';
                 const hz = document.createElement('div');
                 hz.className = 'bar-hit-zone';
-                hz.style.top = '240px'; hz.style.height = '40px';
+                hz.style.top = '340px'; hz.style.height = '40px';
                 track.appendChild(hz); track.appendChild(marker);
                 container.appendChild(keyDisp); container.appendChild(track);
                 document.body.appendChild(container);
@@ -530,7 +531,7 @@
                     if (!state.playing || !state.activeQTEs.includes(qteData)) return;
                     const progress = (Date.now() - qteData.startTime) / qteData.duration;
                     if (progress >= 1) { handleMiss(qteData); return; }
-                    marker.style.top = (progress * 300) + 'px';
+                    marker.style.top = (progress * 400) + 'px';
                     requestAnimationFrame(animate);
                 };
                 requestAnimationFrame(animate);
