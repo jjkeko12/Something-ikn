@@ -125,19 +125,25 @@
         }
 
         /* CIRCLE QTE */
-        .qte-circle {
+        .qte-circle-container {
             position: absolute;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
-            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
             pointer-events: none;
-            z-index: 20;
+            text-align: center;
         }
 
-        .target {
-            width: 110px;
-            height: 110px;
-            background: rgba(30, 30, 40, 0.82);
-            border: 3px solid rgba(255,255,255,0.85);
+        .qte-circle-target {
+            width: 160px;
+            height: 160px;
+            background: rgba(30, 30, 40, 0.85);
+            border: 4px solid rgba(255,255,255,0.9);
             border-radius: 50%;
             position: relative;
             z-index: 10;
@@ -146,32 +152,52 @@
             justify-content: center;
             color: white;
             font-weight: 900;
-            font-size: 2.4rem;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-            box-shadow: 0 0 24px rgba(79, 70, 229, 0.35);
+            font-size: 3.5rem;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+            box-shadow: 0 0 32px rgba(79, 70, 229, 0.45);
+            transition: transform 0.15s ease;
         }
 
-        .target.space-key {
-            font-size: 1.15rem;
-            letter-spacing: 0.06em;
+        .qte-circle-target.space-key {
+            font-size: 1.8rem;
+            letter-spacing: 0.08em;
         }
 
-        .circle-life {
-            position: absolute;
-            left: 50%;
-            bottom: -18px;
-            transform: translateX(-50%);
-            width: 72px;
-            height: 6px;
+        .qte-circle-target.urgent {
+            border-color: #fca5a5;
+            box-shadow: 0 0 32px rgba(239, 68, 68, 0.6);
+            animation: circle-urgent 0.12s ease-in-out infinite alternate;
+        }
+
+        @keyframes circle-urgent {
+            from { transform: scale(1); }
+            to { transform: scale(1.06); }
+        }
+
+        .circle-timer-container {
+            width: 200px;
+            height: 8px;
             background: rgba(255,255,255,0.2);
-            border-radius: 4px;
+            border-radius: 6px;
             overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 16px rgba(0,0,0,0.5);
+            margin-top: 24px;
         }
 
-        .circle-life-bar {
+        .circle-timer-bar {
             height: 100%;
             width: 100%;
             background: #4f46e5;
+            transform-origin: left center;
+        }
+
+        .circle-seq-progress {
+            margin-top: 16px;
+            color: rgba(255,255,255,0.8);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            font-size: 1rem;
         }
 
         .hit-ring-ghost {
@@ -188,8 +214,8 @@
         }
 
         @keyframes ghost-fade {
-            0% { width: 110px; height: 110px; opacity: 0.7; }
-            100% { width: 320px; height: 320px; opacity: 0; }
+            0% { width: 160px; height: 160px; opacity: 0.7; }
+            100% { width: 400px; height: 400px; opacity: 0; }
         }
 
         .shake {
@@ -239,11 +265,7 @@
         </div>
     </div>
 
-    <div id="hud" class="fixed top-6 left-6 z-30 hidden">
-        <div class="bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-full font-bold border border-white/20">
-            Misses: <span id="miss-count" class="text-red-400">0</span> / <span id="max-misses-val">3</span>
-        </div>
-    </div>
+
 
     <div id="game-over" class="fixed inset-0 flex items-center justify-center z-40 hidden bg-red-900/80 backdrop-blur-md">
         <div class="text-center text-white space-y-6">
@@ -309,9 +331,6 @@
             menuSettings: document.getElementById('menu-settings'),
             gameWorld: document.getElementById('game-world'),
             bg: document.getElementById('bg'),
-            hud: document.getElementById('hud'),
-            missText: document.getElementById('miss-count'),
-            maxMissText: document.getElementById('max-misses-val'),
             gameOver: document.getElementById('game-over'),
             gameWin: document.getElementById('game-win'),
             startBtn: document.getElementById('start-btn'),
@@ -326,12 +345,8 @@
                 { value: 'bar', label: 'Bar (Chain)' },
                 { value: 'circle', label: 'Circle' }
             ]},
-            { id: 'seqLen', label: 'Sequence Length', type: 'number', default: 5, min: 1, modes: ['bar'] },
-            { id: 'timePerKey', label: 'Time per Key (ms)', type: 'number', default: 1500, min: 200, modes: ['bar'] },
-            { id: 'spawnInterval', label: 'Spawn Interval (ms)', type: 'number', default: 900, min: 200, modes: ['circle'] },
-            { id: 'circleLife', label: 'Circle Lifetime (ms)', type: 'number', default: 1800, min: 400, modes: ['circle'] },
-            { id: 'maxCircles', label: 'Max Circles', type: 'number', default: 3, min: 1, modes: ['circle'] },
-            { id: 'maxMisses', label: 'Allowed Misses', type: 'number', default: 3, min: 1, modes: ['circle'] },
+            { id: 'seqLen', label: 'Sequence Length', type: 'number', default: 5, min: 1 },
+            { id: 'timePerKey', label: 'Time per Key (ms)', type: 'number', default: 1500, min: 200 },
             { id: 'closeIn', label: 'Close-in Strength', type: 'range', min: 0, max: 20, step: 1, default: 12, unit: '', modes: ['circle'] },
             { id: 'bg', label: 'Background Image URL', type: 'text', default: '', placeholder: 'https://...' },
             { id: 'blur', label: 'Background Blur', type: 'range', min: 0, max: 20, step: 1, default: 5, unit: 'px' },
@@ -488,7 +503,7 @@
             state.timeouts = [];
             state.activeQTEs = [];
             el.gameWorld.classList.remove('shake');
-            el.gameWorld.querySelectorAll('.qte-prompt-container, .qte-circle, .hit-ring-ghost').forEach(n => n.remove());
+            el.gameWorld.querySelectorAll('.qte-prompt-container, .qte-circle-container, .hit-ring-ghost').forEach(n => n.remove());
         }
 
         function readConfig() {
@@ -498,10 +513,6 @@
             state.menuColor = getVal('menuColor');
             state.menuBorderColor = getVal('menuBorder');
             state.timerDuration = parseInt(getVal('timePerKey'), 10) || 1500;
-            state.spawnInterval = parseInt(getVal('spawnInterval'), 10) || 900;
-            state.circleLife = parseInt(getVal('circleLife'), 10) || 1800;
-            state.maxCircles = parseInt(getVal('maxCircles'), 10) || 3;
-            state.maxMisses = parseInt(getVal('maxMisses'), 10) || 3;
             state.closeInPower = (parseInt(getVal('closeIn'), 10) || 0) / 20;
         }
 
@@ -527,16 +538,13 @@
             readConfig();
             generateSequence();
             state.misses = 0;
-            el.missText.innerText = '0';
-            el.maxMissText.innerText = String(state.maxMisses);
             applyWorld();
             el.menu.classList.add('hidden');
             el.gameOver.classList.add('hidden');
             el.gameWin.classList.add('hidden');
-            el.hud.classList.toggle('hidden', state.mode !== 'circle');
             state.playing = true;
-            state.lastSpawnTime = Date.now() - state.spawnInterval;
             if (state.mode === 'bar') spawnBarPrompt();
+            else spawnCirclePrompt();
             loop();
         }
 
@@ -544,7 +552,6 @@
             clearRuntime();
             el.gameOver.classList.add('hidden');
             el.gameWin.classList.add('hidden');
-            el.hud.classList.add('hidden');
             el.menu.classList.remove('hidden');
             el.bg.style.filter = 'none';
         }
@@ -589,6 +596,39 @@
         function processInput(key) {
             if (state.mode === 'bar') processBarInput(key);
             else processCircleInput(key);
+        }
+
+        function spawnCirclePrompt() {
+            el.gameWorld.querySelectorAll('.qte-circle-container').forEach(n => n.remove());
+            const key = state.sequence[state.currentIndex];
+
+            const container = document.createElement('div');
+            container.className = 'qte-circle-container';
+
+            const target = document.createElement('div');
+            target.className = 'qte-circle-target' + (key === ' ' ? ' space-key' : '');
+            target.id = 'current-circle-target';
+            target.innerText = displayKey(key);
+
+            const timerCont = document.createElement('div');
+            timerCont.className = 'circle-timer-container';
+            const timerBar = document.createElement('div');
+            timerBar.className = 'circle-timer-bar';
+            timerBar.id = 'circle-timer-bar';
+            timerCont.appendChild(timerBar);
+
+            const progress = document.createElement('div');
+            progress.className = 'circle-seq-progress';
+            progress.id = 'circle-seq-progress';
+            progress.innerText = `${state.currentIndex + 1} / ${state.sequence.length}`;
+
+            container.appendChild(target);
+            container.appendChild(timerCont);
+            container.appendChild(progress);
+            el.gameWorld.appendChild(container);
+
+            state.timerStart = Date.now();
+            state.resolving = false;
         }
 
         function spawnBarPrompt() {
@@ -657,49 +697,11 @@
             later(() => endGame(), 220);
         }
 
-        function spawnCircle() {
-            if (!state.playing || state.activeQTEs.length >= state.maxCircles) return;
-
-            const used = new Set(state.activeQTEs.map(q => q.key));
-            let key = randomKey();
-            let guard = 0;
-            while (used.has(key) && guard < 12) {
-                key = randomKey();
-                guard++;
-            }
-
-            const qte = document.createElement('div');
-            qte.className = 'qte-circle';
-            qte.style.left = (Math.random() * 70 + 15) + '%';
-            qte.style.top = (Math.random() * 70 + 15) + '%';
-
-            const target = document.createElement('div');
-            target.className = 'target' + (key === ' ' ? ' space-key' : '');
-            target.innerText = displayKey(key);
-
-            const life = document.createElement('div');
-            life.className = 'circle-life';
-            const lifeBar = document.createElement('div');
-            lifeBar.className = 'circle-life-bar';
-            life.appendChild(lifeBar);
-
-            qte.appendChild(target);
-            qte.appendChild(life);
-            el.gameWorld.appendChild(qte);
-
-            state.activeQTEs.push({
-                element: qte,
-                lifeBar,
-                key,
-                startTime: Date.now(),
-                duration: state.circleLife
-            });
-        }
-
         function processCircleInput(key) {
-            const match = state.activeQTEs.find(q => q.key === key);
-            if (match) circleHit(match);
-            else circleMiss(null);
+            const expected = state.sequence[state.currentIndex];
+            const targetEl = document.getElementById('current-circle-target');
+            if (key === expected) circleHit(targetEl);
+            else circleFail(targetEl);
         }
 
         function triggerCloseIn() {
@@ -713,9 +715,11 @@
             later(() => el.gameWorld.classList.remove('shake'), 250);
         }
 
-        function circleHit(qteData) {
+        function circleHit(targetEl) {
             triggerCloseIn();
-            const rect = qteData.element.getBoundingClientRect();
+            
+            // Green circle feedback on hit
+            const rect = targetEl.getBoundingClientRect();
             const world = el.gameWorld.getBoundingClientRect();
             const ghost = document.createElement('div');
             ghost.className = 'hit-ring-ghost';
@@ -724,23 +728,30 @@
             el.gameWorld.appendChild(ghost);
             later(() => ghost.remove(), 900);
 
-            qteData.element.classList.add('fade-out');
-            state.activeQTEs = state.activeQTEs.filter(q => q !== qteData);
-            later(() => qteData.element.remove(), 220);
+            state.resolving = true;
+            if (targetEl) {
+                targetEl.classList.remove('urgent');
+                targetEl.classList.add('qte-success');
+            }
+            later(() => {
+                if (!state.playing) return;
+                state.currentIndex++;
+                if (state.currentIndex >= state.sequence.length) {
+                    winGame();
+                    return;
+                }
+                spawnCirclePrompt();
+            }, 90);
         }
 
-        function circleMiss(qteData) {
+        function circleFail(targetEl) {
             triggerCloseIn();
-            state.misses++;
-            el.missText.innerText = String(state.misses);
-
-            if (qteData) {
-                qteData.element.classList.add('fade-out');
-                state.activeQTEs = state.activeQTEs.filter(q => q !== qteData);
-                later(() => qteData.element.remove(), 220);
+            state.resolving = true;
+            if (targetEl) {
+                targetEl.classList.remove('urgent');
+                targetEl.classList.add('qte-fail');
             }
-
-            if (state.misses >= state.maxMisses) endGame();
+            later(() => endGame(), 220);
         }
 
         function loop() {
@@ -765,20 +776,17 @@
         }
 
         function tickCircle() {
-            const now = Date.now();
-            if (now - state.lastSpawnTime >= state.spawnInterval) {
-                spawnCircle();
-                state.lastSpawnTime = now;
+            if (state.resolving) return;
+            const elapsed = Date.now() - state.timerStart;
+            const progress = Math.max(0, 1 - (elapsed / state.timerDuration));
+            const bar = document.getElementById('circle-timer-bar');
+            const targetEl = document.getElementById('current-circle-target');
+            if (bar) {
+                bar.style.width = (progress * 100) + '%';
+                bar.style.backgroundColor = progress < 0.3 ? '#ef4444' : '#4f46e5';
             }
-            [...state.activeQTEs].forEach(q => {
-                const elapsed = now - q.startTime;
-                const progress = Math.max(0, 1 - (elapsed / q.duration));
-                if (q.lifeBar) {
-                    q.lifeBar.style.width = (progress * 100) + '%';
-                    q.lifeBar.style.backgroundColor = progress < 0.3 ? '#ef4444' : '#4f46e5';
-                }
-                if (elapsed >= q.duration) circleMiss(q);
-            });
+            if (targetEl) targetEl.classList.toggle('urgent', progress < 0.3);
+            if (elapsed >= state.timerDuration) circleFail(targetEl);
         }
 
         function endGame() {
