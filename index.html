@@ -39,29 +39,105 @@
             transition: filter 0.5s ease;
         }
 
-        /* CIRCLE MODE STYLES */
-        .qte-circle {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            user-select: none;
-        }
-
-        .ring {
+        /* BAR / CHAIN QTE */
+        .qte-prompt-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            border: 4px solid white;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
             pointer-events: none;
+            text-align: center;
+        }
+
+        .qte-key {
+            font-size: 12rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(79, 70, 229, 0.6);
+            margin-bottom: 20px;
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        .qte-key.space-key {
+            font-size: 6rem;
+        }
+
+        .qte-key.urgent {
+            color: #fca5a5;
+            text-shadow: 0 0 30px rgba(239, 68, 68, 0.7);
+            animation: key-urgent 0.1s ease-in-out infinite alternate;
+        }
+
+        @keyframes key-urgent {
+            from { transform: translateX(-4px); }
+            to { transform: translateX(4px); }
+        }
+
+        .timer-container {
+            width: 400px;
+            height: 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: #4f46e5;
+            transform-origin: left center;
+        }
+
+        .qte-success {
+            animation: success-pop 0.18s ease-out;
+        }
+
+        @keyframes success-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.18); color: #4ade80; }
+            100% { transform: scale(1); }
+        }
+
+        .qte-fail {
+            animation: fail-shake 0.28s ease-in-out;
+        }
+
+        @keyframes fail-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-18px); color: #ef4444; }
+            75% { transform: translateX(18px); color: #ef4444; }
+        }
+
+        .seq-progress {
+            margin-top: 16px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            font-size: 0.95rem;
+        }
+
+        /* CIRCLE QTE */
+        .qte-circle {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            user-select: none;
+            pointer-events: none;
+            z-index: 20;
         }
 
         .target {
-            width: 100px;
-            height: 100px;
-            background: rgba(60, 60, 60, 0.8);
-            border: 2px solid #888;
+            width: 110px;
+            height: 110px;
+            background: rgba(30, 30, 40, 0.82);
+            border: 3px solid rgba(255,255,255,0.85);
             border-radius: 50%;
             position: relative;
             z-index: 10;
@@ -70,96 +146,32 @@
             justify-content: center;
             color: white;
             font-weight: 900;
-            font-size: 2.5rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            font-size: 2.4rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            box-shadow: 0 0 24px rgba(79, 70, 229, 0.35);
         }
 
-        .hit-zone {
+        .target.space-key {
+            font-size: 1.15rem;
+            letter-spacing: 0.06em;
+        }
+
+        .circle-life {
             position: absolute;
-            top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 130px;
-            height: 130px;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        /* BAR MODE STYLES (Inspired by Chain/Roblox) */
-        .bar-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-            z-index: 50;
-        }
-
-        .key-display {
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            font-weight: 900;
-            font-size: 4rem;
-            width: 120px;
-            height: 120px;
-            border: 6px solid #fff;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
-
-        .bar-track {
-            width: 60px;
-            height: 400px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 30px;
-            position: relative;
+            bottom: -18px;
+            transform: translateX(-50%);
+            width: 72px;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
             overflow: hidden;
-            box-shadow: inset 0 0 20px #000;
         }
 
-        .bar-marker {
-            position: absolute;
-            left: 0;
+        .circle-life-bar {
+            height: 100%;
             width: 100%;
-            height: 12px;
-            background: #fff;
-            box-shadow: 0 0 15px #fff, 0 0 30px #fff;
-            z-index: 10;
-            border-radius: 2px;
-        }
-
-        .bar-hit-zone {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            background: rgba(74, 222, 128, 0.6);
-            border-top: 4px solid #4ade80;
-            border-bottom: 4px solid #4ade80;
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        /* COMMON EFFECTS */
-        .hit-ring-outer {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 6px solid #4ade80;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 100;
-            animation: expand-fade 1.5s ease-out forwards;
+            background: #4f46e5;
         }
 
         .hit-ring-ghost {
@@ -167,23 +179,17 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            border: 2px solid #22c55e;
-            background: rgba(34, 197, 94, 0.4);
+            border: 2px solid rgba(74, 222, 128, 0.55);
+            background: rgba(34, 197, 94, 0.18);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 99;
-            animation: ghost-fade 2.0s ease-out forwards;
-        }
-
-        @keyframes expand-fade {
-            0% { width: 0; height: 0; opacity: 1; }
-            100% { width: 2000px; height: 2000px; opacity: 0; }
+            z-index: 9;
+            animation: ghost-fade 0.9s ease-out forwards;
         }
 
         @keyframes ghost-fade {
-            0% { width: 0; height: 0; opacity: 0.8; }
-            20% { width: 150px; height: 150px; opacity: 0.6; }
-            100% { width: 600px; height: 600px; opacity: 0; }
+            0% { width: 110px; height: 110px; opacity: 0.7; }
+            100% { width: 320px; height: 320px; opacity: 0; }
         }
 
         .shake {
@@ -193,17 +199,21 @@
         @keyframes zoom-shake-anim {
             0% { transform: scale(1); }
             30% { transform: scale(var(--scale-min, 0.85)); }
-            60% { transform: scale(var(--scale-max, 1.15)); }
+            60% { transform: scale(var(--scale-max, 1.08)); }
             100% { transform: scale(1); }
         }
 
         .fade-out {
-            animation: fadeOut 0.3s forwards;
+            animation: fadeOut 0.22s forwards;
         }
 
         @keyframes fadeOut {
             from { opacity: 1; }
             to { opacity: 0; }
+        }
+
+        .cfg-row[hidden] {
+            display: none !important;
         }
     </style>
 </head>
@@ -221,7 +231,6 @@
             </div>
 
             <div id="menu-settings" class="space-y-4">
-                <!-- Settings injected by JS -->
             </div>
 
             <button id="start-btn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xl rounded-xl transition-all transform hover:scale-105 active:scale-95 shadow-lg">
@@ -251,25 +260,48 @@
         </div>
     </div>
 
+    <div id="game-win" class="fixed inset-0 flex items-center justify-center z-40 hidden bg-emerald-900/80 backdrop-blur-md">
+        <div class="text-center text-white space-y-6">
+            <h2 class="text-7xl font-black tracking-tighter italic">SUCCESS</h2>
+            <p class="text-2xl font-medium opacity-80">Sequence complete.</p>
+            <div class="flex flex-col gap-3 items-center">
+                <button id="win-restart-btn" class="px-8 py-3 bg-white text-emerald-700 font-black rounded-full hover:bg-slate-100 transition-all transform hover:scale-110 shadow-xl">
+                    INSTANT RESTART (Enter)
+                </button>
+                <button id="win-menu-btn" class="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white/10 transition-all">
+                    RETURN TO MENU
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        const KEY_POOL = ['Q', 'E', 'R', 'F', 'A', 'D', 'W', 'S', ' '];
+
         const state = {
             playing: false,
+            mode: 'bar',
+            sequence: [],
+            currentIndex: 0,
+            timerStart: 0,
+            timerDuration: 1500,
+            isKeydown: {},
             misses: 0,
             maxMisses: 3,
-            speed: 1,
-            overlapDelay: 2,
-            hitShakePower: 1.5,
-            missShakePower: 0.8,
-            blur: 5,
             bgUrl: '',
-            mode: 'circle',
+            blur: 5,
+            menuColor: '#ffffff',
+            menuBorderColor: '#4f46e5',
+            closeInPower: 0.7,
+            spawnInterval: 900,
+            circleLife: 1800,
+            maxCircles: 3,
             activeQTEs: [],
             lastSpawnTime: 0,
-            menuColor: '#ffffff',
-            menuBorderColor: '#4f46e5'
+            rafId: 0,
+            timeouts: [],
+            resolving: false
         };
-
-        const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
         const el = {
             menu: document.getElementById('menu'),
@@ -281,27 +313,40 @@
             missText: document.getElementById('miss-count'),
             maxMissText: document.getElementById('max-misses-val'),
             gameOver: document.getElementById('game-over'),
+            gameWin: document.getElementById('game-win'),
             startBtn: document.getElementById('start-btn'),
             restartBtn: document.getElementById('restart-btn'),
             quickRestartBtn: document.getElementById('quick-restart-btn'),
+            winRestartBtn: document.getElementById('win-restart-btn'),
+            winMenuBtn: document.getElementById('win-menu-btn'),
         };
 
         const CONFIGS = [
-            { id: 'mode', label: 'Game Mode', type: 'select', options: ['circle', 'bar'], default: 'circle' },
+            { id: 'mode', label: 'QTE Mode', type: 'select', default: 'bar', options: [
+                { value: 'bar', label: 'Bar (Chain)' },
+                { value: 'circle', label: 'Circle' }
+            ]},
+            { id: 'seqLen', label: 'Sequence Length', type: 'number', default: 5, min: 1, modes: ['bar'] },
+            { id: 'timePerKey', label: 'Time per Key (ms)', type: 'number', default: 1500, min: 200, modes: ['bar'] },
+            { id: 'spawnInterval', label: 'Spawn Interval (ms)', type: 'number', default: 900, min: 200, modes: ['circle'] },
+            { id: 'circleLife', label: 'Circle Lifetime (ms)', type: 'number', default: 1800, min: 400, modes: ['circle'] },
+            { id: 'maxCircles', label: 'Max Circles', type: 'number', default: 3, min: 1, modes: ['circle'] },
+            { id: 'maxMisses', label: 'Allowed Misses', type: 'number', default: 3, min: 1, modes: ['circle'] },
+            { id: 'closeIn', label: 'Close-in Strength', type: 'range', min: 0, max: 20, step: 1, default: 12, unit: '', modes: ['circle'] },
             { id: 'bg', label: 'Background Image URL', type: 'text', default: '', placeholder: 'https://...' },
-            { id: 'speed', label: 'Game Speed', type: 'range', min: 0.5, max: 5, step: 0.1, default: 1, unit: 'x' },
-            { id: 'overlap', label: 'Overlap Delay', type: 'range', min: 0, max: 5, step: 0.1, default: 2, unit: 's' },
-            { id: 'hitShake', label: 'Hit Shake', type: 'range', min: 0, max: 5, step: 0.1, default: 1.5, unit: '', color: 'accent-green-600' },
-            { id: 'missShake', label: 'Miss Shake', type: 'range', min: 0, max: 5, step: 0.1, default: 0.8, unit: '', color: 'accent-red-600' },
             { id: 'blur', label: 'Background Blur', type: 'range', min: 0, max: 20, step: 1, default: 5, unit: 'px' },
-            { id: 'misses', label: 'Allowed Misses', type: 'number', default: 3, min: 1 },
             { id: 'menuColor', label: 'Menu BG Color', type: 'color', default: '#ffffff' },
             { id: 'menuBorder', label: 'Menu Border Color', type: 'color', default: '#4f46e5' },
         ];
 
+        function getVal(id) {
+            const input = document.getElementById(`cfg-${id}`);
+            return input ? input.value : '';
+        }
+
         function applyMenuStyles() {
-            const bgColor = document.getElementById('cfg-menuColor')?.value || state.menuColor;
-            const borderColor = document.getElementById('cfg-menuBorder')?.value || state.menuBorderColor;
+            const bgColor = getVal('menuColor') || state.menuColor;
+            const borderColor = getVal('menuBorder') || state.menuBorderColor;
             el.menuCard.style.backgroundColor = bgColor;
             el.menuCard.style.borderColor = borderColor;
             el.menuCard.style.boxShadow = `0 0 20px ${borderColor}`;
@@ -309,7 +354,7 @@
             el.menuCard.querySelectorAll('h1, p, label').forEach(item => {
                 item.style.color = isDark ? '#f8fafc' : '#1e293b';
             });
-            const inputs = el.menuCard.querySelectorAll('input[type="text"], input[type="number"]');
+            const inputs = el.menuCard.querySelectorAll('input[type="text"], input[type="number"], select');
             inputs.forEach(input => {
                 if (isDark) {
                     input.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
@@ -341,23 +386,55 @@
             return ((r * 299 + g * 587 + b * 114) / 1000) < 128;
         }
 
+        function updateModeFields() {
+            const mode = getVal('mode') || 'bar';
+            CONFIGS.forEach(conf => {
+                if (!conf.modes) return;
+                const row = document.getElementById(`row-${conf.id}`);
+                if (row) row.hidden = !conf.modes.includes(mode);
+            });
+        }
+
         function buildMenu() {
             el.menuSettings.innerHTML = '';
             CONFIGS.forEach(conf => {
                 const wrapper = document.createElement('div');
-                wrapper.className = 'flex flex-col gap-1';
+                wrapper.className = 'flex flex-col gap-1 cfg-row';
+                wrapper.id = `row-${conf.id}`;
                 const label = document.createElement('label');
                 label.className = 'block text-sm font-bold text-slate-700 mb-1';
-                label.innerHTML = `${conf.label} <span id="val-${conf.id}">${conf.default}</span>${conf.unit || ''}`;
+                const valSpan = conf.type === 'range'
+                    ? ` <span id="val-${conf.id}">${conf.default}</span>${conf.unit || ''}`
+                    : '';
+                label.innerHTML = `${conf.label}${valSpan}`;
+
+                if (conf.type === 'select') {
+                    const select = document.createElement('select');
+                    select.id = `cfg-${conf.id}`;
+                    select.className = 'w-full p-2 border rounded-lg outline-none focus:ring-2 ring-indigo-500 bg-white';
+                    conf.options.forEach(opt => {
+                        const o = document.createElement('option');
+                        o.value = opt.value;
+                        o.innerText = opt.label;
+                        if (opt.value === conf.default) o.selected = true;
+                        select.appendChild(o);
+                    });
+                    select.onchange = updateModeFields;
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(select);
+                    el.menuSettings.appendChild(wrapper);
+                    return;
+                }
+
                 const input = document.createElement('input');
                 input.id = `cfg-${conf.id}`;
                 input.value = conf.default;
                 if (conf.type === 'text') {
                     input.className = 'w-full p-2 border rounded-lg outline-none focus:ring-2 ring-indigo-500';
-                    input.placeholder = conf.placeholder;
+                    input.placeholder = conf.placeholder || '';
                 } else if (conf.type === 'range') {
                     input.type = 'range'; input.min = conf.min; input.max = conf.max; input.step = conf.step;
-                    input.className = `w-full ${conf.color || 'accent-indigo-600'}`;
+                    input.className = 'w-full accent-indigo-600';
                     input.oninput = () => {
                         const valEl = document.getElementById(`val-${conf.id}`);
                         if (valEl) valEl.innerText = input.value;
@@ -368,211 +445,352 @@
                 } else if (conf.type === 'color') {
                     input.type = 'color'; input.className = 'w-full h-10 p-1 border rounded-lg cursor-pointer';
                     input.oninput = applyMenuStyles;
-                } else if (conf.type === 'select') {
-                    const select = document.createElement('select');
-                    select.id = `cfg-${conf.id}`;
-                    select.className = 'w-full p-2 border rounded-lg outline-none focus:ring-2 ring-indigo-500 bg-white';
-                    conf.options.forEach(opt => {
-                        const o = document.createElement('option');
-                        o.value = opt; o.innerText = opt.charAt(0).toUpperCase() + opt.slice(1);
-                        select.appendChild(o);
-                    });
-                    wrapper.appendChild(label);
-                    wrapper.appendChild(select);
-                    el.menuSettings.appendChild(wrapper);
-                    return;
                 }
                 wrapper.appendChild(label);
                 wrapper.appendChild(input);
                 el.menuSettings.appendChild(wrapper);
             });
+            updateModeFields();
             applyMenuStyles();
         }
 
-        el.startBtn.onclick = () => {
-            const getVal = (id) => {
-                const input = document.getElementById(`cfg-${id}`);
-                return input ? input.value : '';
-            };
-            state.mode = getVal('mode');
+        function randomKey() {
+            return KEY_POOL[Math.floor(Math.random() * KEY_POOL.length)];
+        }
+
+        function displayKey(key) {
+            return key === ' ' ? 'SPACE' : key;
+        }
+
+        function normalizeEventKey(e) {
+            if (e.code === 'Space' || e.key === ' ') return ' ';
+            if (e.key && e.key.length === 1) return e.key.toUpperCase();
+            return e.key;
+        }
+
+        function holdId(e) {
+            return e.code || e.key;
+        }
+
+        function later(fn, ms) {
+            const id = setTimeout(fn, ms);
+            state.timeouts.push(id);
+            return id;
+        }
+
+        function clearRuntime() {
+            state.playing = false;
+            state.resolving = false;
+            state.isKeydown = {};
+            if (state.rafId) cancelAnimationFrame(state.rafId);
+            state.rafId = 0;
+            state.timeouts.forEach(clearTimeout);
+            state.timeouts = [];
+            state.activeQTEs = [];
+            el.gameWorld.classList.remove('shake');
+            el.gameWorld.querySelectorAll('.qte-prompt-container, .qte-circle, .hit-ring-ghost').forEach(n => n.remove());
+        }
+
+        function readConfig() {
+            state.mode = getVal('mode') || 'bar';
             state.bgUrl = getVal('bg');
-            state.speed = parseFloat(getVal('speed')) || 1;
-            state.overlapDelay = parseFloat(getVal('overlap')) || 2;
-            state.hitShakePower = parseFloat(getVal('hitShake')) || 1.5;
-            state.missShakePower = parseFloat(getVal('missShake')) || 0.8;
-            state.blur = parseInt(getVal('blur')) || 5;
-            state.maxMisses = parseInt(getVal('misses')) || 3;
+            state.blur = parseInt(getVal('blur'), 10) || 0;
             state.menuColor = getVal('menuColor');
             state.menuBorderColor = getVal('menuBorder');
-            state.misses = 0;
-            applyMenuStyles();
-            if (state.bgUrl) el.bg.style.backgroundImage = `url('${state.bgUrl}')`;
-            else { el.bg.style.backgroundImage = 'none'; el.bg.style.backgroundColor = '#000'; }
-            el.bg.style.filter = `blur(${state.blur}px)`;
-            el.menu.classList.add('hidden');
-            el.hud.classList.remove('hidden');
-            el.maxMissText.innerText = state.maxMisses;
-            el.missText.innerText = state.misses;
-            state.playing = true;
-            state.activeQTEs = [];
-            state.lastSpawnTime = Date.now();
-            spawnQTE();
-            gameLoop();
-        };
-
-        el.restartBtn.onclick = () => {
-            el.gameOver.classList.add('hidden');
-            el.menu.classList.remove('hidden');
-            el.hud.classList.add('hidden');
-            el.bg.style.filter = 'none';
-        };
-
-        el.quickRestartBtn.onclick = quickRestart;
-
-        function quickRestart() {
-            state.misses = 0;
-            el.missText.innerText = state.misses;
-            el.gameOver.classList.add('hidden');
-            state.playing = true;
-            state.activeQTEs = [];
-            state.lastSpawnTime = Date.now();
-            spawnQTE();
-            gameLoop();
+            state.timerDuration = parseInt(getVal('timePerKey'), 10) || 1500;
+            state.spawnInterval = parseInt(getVal('spawnInterval'), 10) || 900;
+            state.circleLife = parseInt(getVal('circleLife'), 10) || 1800;
+            state.maxCircles = parseInt(getVal('maxCircles'), 10) || 3;
+            state.maxMisses = parseInt(getVal('maxMisses'), 10) || 3;
+            state.closeInPower = (parseInt(getVal('closeIn'), 10) || 0) / 20;
         }
 
-        window.onkeydown = (e) => {
-            if (e.key === 'Enter' && !el.gameOver.classList.contains('hidden')) {
+        function generateSequence() {
+            const seqLen = parseInt(getVal('seqLen'), 10) || 5;
+            state.sequence = [];
+            for (let i = 0; i < seqLen; i++) state.sequence.push(randomKey());
+            state.currentIndex = 0;
+        }
+
+        function applyWorld() {
+            applyMenuStyles();
+            if (state.bgUrl) el.bg.style.backgroundImage = `url('${state.bgUrl}')`;
+            else {
+                el.bg.style.backgroundImage = 'none';
+                el.bg.style.backgroundColor = '#000';
+            }
+            el.bg.style.filter = `blur(${state.blur}px)`;
+        }
+
+        function startGame() {
+            clearRuntime();
+            readConfig();
+            generateSequence();
+            state.misses = 0;
+            el.missText.innerText = '0';
+            el.maxMissText.innerText = String(state.maxMisses);
+            applyWorld();
+            el.menu.classList.add('hidden');
+            el.gameOver.classList.add('hidden');
+            el.gameWin.classList.add('hidden');
+            el.hud.classList.toggle('hidden', state.mode !== 'circle');
+            state.playing = true;
+            state.lastSpawnTime = Date.now() - state.spawnInterval;
+            if (state.mode === 'bar') spawnBarPrompt();
+            loop();
+        }
+
+        function returnToMenu() {
+            clearRuntime();
+            el.gameOver.classList.add('hidden');
+            el.gameWin.classList.add('hidden');
+            el.hud.classList.add('hidden');
+            el.menu.classList.remove('hidden');
+            el.bg.style.filter = 'none';
+        }
+
+        function quickRestart() {
+            clearRuntime();
+            startGame();
+        }
+
+        el.startBtn.onclick = startGame;
+        el.restartBtn.onclick = returnToMenu;
+        el.winMenuBtn.onclick = returnToMenu;
+        el.quickRestartBtn.onclick = quickRestart;
+        el.winRestartBtn.onclick = quickRestart;
+
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keyup', onKeyUp);
+
+        function onKeyDown(e) {
+            const ended = !el.gameOver.classList.contains('hidden') || !el.gameWin.classList.contains('hidden');
+            if (e.key === 'Enter' && ended) {
+                e.preventDefault();
                 quickRestart();
                 return;
             }
-            if (!state.playing || state.activeQTEs.length === 0) return;
-            const pressedKey = e.key.toUpperCase();
-            const targetQTE = state.activeQTEs[0];
-            if (pressedKey === targetQTE.key) {
-                if (state.mode === 'circle') {
-                    const elapsed = Date, progress = elapsed / targetQTE.duration;
-                    const currentSize = 250 - (200 * progress);
-                    if (currentSize <= 130 && currentSize >= 100) handleHit(targetQTE);
-                    else handleMiss(targetQTE);
-                } else {
-                    const elapsed = Date.now() - targetQTE.startTime;
-                    const progress = elapsed / targetQTE.duration;
-                    const markerPos = progress * 400;
-                    const hitZoneTop = 340;
-                    const hitZoneBottom = 380;
-                    if (markerPos >= hitZoneTop && markerPos <= hitZoneBottom) handleHit(targetQTE);
-                    else handleMiss(targetQTE);
+
+            if (e.code === 'Space') e.preventDefault();
+
+            if (!state.playing || state.resolving) return;
+
+            const id = holdId(e);
+            if (state.isKeydown[id]) return;
+            state.isKeydown[id] = true;
+
+            processInput(normalizeEventKey(e));
+        }
+
+        function onKeyUp(e) {
+            state.isKeydown[holdId(e)] = false;
+        }
+
+        function processInput(key) {
+            if (state.mode === 'bar') processBarInput(key);
+            else processCircleInput(key);
+        }
+
+        function spawnBarPrompt() {
+            el.gameWorld.querySelectorAll('.qte-prompt-container').forEach(n => n.remove());
+            const key = state.sequence[state.currentIndex];
+
+            const container = document.createElement('div');
+            container.className = 'qte-prompt-container';
+
+            const keyEl = document.createElement('div');
+            keyEl.className = 'qte-key' + (key === ' ' ? ' space-key' : '');
+            keyEl.id = 'current-qte-key';
+            keyEl.innerText = displayKey(key);
+
+            const timerCont = document.createElement('div');
+            timerCont.className = 'timer-container';
+            const timerBar = document.createElement('div');
+            timerBar.className = 'timer-bar';
+            timerBar.id = 'qte-timer-bar';
+            timerCont.appendChild(timerBar);
+
+            const progress = document.createElement('div');
+            progress.className = 'seq-progress';
+            progress.id = 'qte-seq-progress';
+            progress.innerText = `${state.currentIndex + 1} / ${state.sequence.length}`;
+
+            container.appendChild(keyEl);
+            container.appendChild(timerCont);
+            container.appendChild(progress);
+            el.gameWorld.appendChild(container);
+
+            state.timerStart = Date.now();
+            state.resolving = false;
+        }
+
+        function processBarInput(key) {
+            const expected = state.sequence[state.currentIndex];
+            const keyEl = document.getElementById('current-qte-key');
+            if (key === expected) barHit(keyEl);
+            else barFail(keyEl);
+        }
+
+        function barHit(keyEl) {
+            state.resolving = true;
+            if (keyEl) {
+                keyEl.classList.remove('urgent');
+                keyEl.classList.add('qte-success');
+            }
+            later(() => {
+                if (!state.playing) return;
+                state.currentIndex++;
+                if (state.currentIndex >= state.sequence.length) {
+                    winGame();
+                    return;
                 }
-            } else {
-                handleMiss(targetQTE);
-            }
-        };
-
-        function gameLoop() {
-            if (!state.playing) return;
-            const now = Date.now();
-            if (now - state.lastSpawnTime >= state.overlapDelay * 1000) {
-                spawnQTE();
-                state.lastSpawnTime = now;
-            }
-            requestAnimationFrame(gameLoop);
+                spawnBarPrompt();
+            }, 90);
         }
 
-        function spawnQTE() {
-            if (!state.playing) return;
-            const randomLetter = LETTERS[Math.floor(Math.random() * LETTERS.length)];
-            if (state.mode === 'circle') {
-                const qte = document.createElement('div');
-                qte.className = 'qte-circle';
-                const x = Math.random() * 70 + 15;
-                const y = Math.random() * 70 + 15;
-                qte.style.left = x + '%';
-                qte.style.top = y + '%';
-                const target = document.createElement('div');
-                target.className = 'target';
-                target.innerText = randomLetter;
-                const ring = document.createElement('div');
-                ring.className = 'ring';
-                const hitZone = document.createElement('div');
-                hitZone.className = 'hit-zone';
-                qte.appendChild(hitZone); qte.appendChild(target); qte.appendChild(ring);
-                document.body.appendChild(qte);
-                const qteData = { element: qte, ring: ring, key: randomLetter, startTime: Date.now(), duration: 2000 / state.speed };
-                state.activeQTEs.push(qteData);
-                const animate = () => {
-                    if (!state.playing || !state.activeQTEs.includes(qteData)) return;
-                    const progress = (Date.now() - qteData.startTime) / qteData.duration;
-                    if (progress >= 1) { handleMiss(qteData); return; }
-                    const size = 250 - (200 * progress);
-                    ring.style.width = size + 'px'; ring.style.height = size + 'px';
-                    requestAnimationFrame(animate);
-                };
-                requestAnimationFrame(animate);
-            } else {
-                const container = document.createElement('div');
-                container.className = 'bar-container';
-                const keyDisp = document.createElement('div');
-                keyDisp.className = 'key-display';
-                keyDisp.innerText = randomLetter;
-                const track = document.createElement('div');
-                track.className = 'bar-track';
-                track.style.height = '400px';
-                const marker = document.createElement('div');
-                marker.className = 'bar-marker';
-                const hz = document.createElement('div');
-                hz.className = 'bar-hit-zone';
-                hz.style.top = '340px'; hz.style.height = '40px';
-                track.appendChild(hz); track.appendChild(marker);
-                container.appendChild(keyDisp); container.appendChild(track);
-                document.body.appendChild(container);
-                const qteData = { element: container, marker: marker, key: randomLetter, startTime: Date.now(), duration: 2000 / state.speed };
-                state.activeQTEs.push(qteData);
-                const animate = () => {
-                    if (!state.playing || !state.activeQTEs.includes(qteData)) return;
-                    const progress = (Date.now() - qteData.startTime) / qteData.duration;
-                    if (progress >= 1) { handleMiss(qteData); return; }
-                    marker.style.top = (progress * 400) + 'px';
-                    requestAnimationFrame(animate);
-                };
-                requestAnimationFrame(animate);
+        function barFail(keyEl) {
+            state.resolving = true;
+            if (keyEl) {
+                keyEl.classList.remove('urgent');
+                keyEl.classList.add('qte-fail');
             }
+            later(() => endGame(), 220);
         }
 
-        function triggerShake(power) {
-            el.gameWorld.style.setProperty('--scale-min', 1 - (0.1 * power));
-            el.gameWorld.style.setProperty('--scale-max', 1 + (0.1 * power));
+        function spawnCircle() {
+            if (!state.playing || state.activeQTEs.length >= state.maxCircles) return;
+
+            const used = new Set(state.activeQTEs.map(q => q.key));
+            let key = randomKey();
+            let guard = 0;
+            while (used.has(key) && guard < 12) {
+                key = randomKey();
+                guard++;
+            }
+
+            const qte = document.createElement('div');
+            qte.className = 'qte-circle';
+            qte.style.left = (Math.random() * 70 + 15) + '%';
+            qte.style.top = (Math.random() * 70 + 15) + '%';
+
+            const target = document.createElement('div');
+            target.className = 'target' + (key === ' ' ? ' space-key' : '');
+            target.innerText = displayKey(key);
+
+            const life = document.createElement('div');
+            life.className = 'circle-life';
+            const lifeBar = document.createElement('div');
+            lifeBar.className = 'circle-life-bar';
+            life.appendChild(lifeBar);
+
+            qte.appendChild(target);
+            qte.appendChild(life);
+            el.gameWorld.appendChild(qte);
+
+            state.activeQTEs.push({
+                element: qte,
+                lifeBar,
+                key,
+                startTime: Date.now(),
+                duration: state.circleLife
+            });
+        }
+
+        function processCircleInput(key) {
+            const match = state.activeQTEs.find(q => q.key === key);
+            if (match) circleHit(match);
+            else circleMiss(null);
+        }
+
+        function triggerCloseIn() {
+            const power = state.closeInPower;
+            if (power <= 0) return;
+            el.gameWorld.style.setProperty('--scale-min', String(1 - (0.22 * power)));
+            el.gameWorld.style.setProperty('--scale-max', String(1 + (0.06 * power)));
             el.gameWorld.classList.remove('shake');
             void el.gameWorld.offsetWidth;
             el.gameWorld.classList.add('shake');
-            setTimeout(() => el.gameWorld.classList.remove('shake'), 250);
+            later(() => el.gameWorld.classList.remove('shake'), 250);
         }
 
-        function handleHit(qteData) {
-            triggerShake(state.hitShakePower);
-            if (state.mode === 'circle') {
-                const outer = document.createElement('div'); outer.className = 'hit-ring-outer';
-                const ghost = document.createElement('div'); ghost.className = 'hit-ring-ghost';
-                qteData.element.appendChild(outer); qteData.element.appendChild(ghost);
-                setTimeout(() => { if(outer.parentNode) outer.remove(); if(ghost.parentNode) ghost.remove(); }, 800);
-            }
+        function circleHit(qteData) {
+            triggerCloseIn();
+            const rect = qteData.element.getBoundingClientRect();
+            const world = el.gameWorld.getBoundingClientRect();
+            const ghost = document.createElement('div');
+            ghost.className = 'hit-ring-ghost';
+            ghost.style.left = (rect.left + rect.width / 2 - world.left) + 'px';
+            ghost.style.top = (rect.top + rect.height / 2 - world.top) + 'px';
+            el.gameWorld.appendChild(ghost);
+            later(() => ghost.remove(), 900);
+
             qteData.element.classList.add('fade-out');
             state.activeQTEs = state.activeQTEs.filter(q => q !== qteData);
-            setTimeout(() => qteData.element.remove(), 300);
+            later(() => qteData.element.remove(), 220);
         }
 
-        function handleMiss(qteData) {
-            triggerShake(state.missShakePower);
+        function circleMiss(qteData) {
+            triggerCloseIn();
             state.misses++;
-            el.missText.innerText = state.misses;
-            qteData.element.classList.add('fade-out');
-            state.activeQTEs = state.activeQTEs.filter(q => q !== qteData);
-            setTimeout(() => qteData.element.remove(), 300);
+            el.missText.innerText = String(state.misses);
+
+            if (qteData) {
+                qteData.element.classList.add('fade-out');
+                state.activeQTEs = state.activeQTEs.filter(q => q !== qteData);
+                later(() => qteData.element.remove(), 220);
+            }
+
             if (state.misses >= state.maxMisses) endGame();
         }
 
+        function loop() {
+            if (!state.playing) return;
+            if (state.mode === 'bar') tickBar();
+            else tickCircle();
+            state.rafId = requestAnimationFrame(loop);
+        }
+
+        function tickBar() {
+            if (state.resolving) return;
+            const elapsed = Date.now() - state.timerStart;
+            const progress = Math.max(0, 1 - (elapsed / state.timerDuration));
+            const bar = document.getElementById('qte-timer-bar');
+            const keyEl = document.getElementById('current-qte-key');
+            if (bar) {
+                bar.style.width = (progress * 100) + '%';
+                bar.style.backgroundColor = progress < 0.3 ? '#ef4444' : '#4f46e5';
+            }
+            if (keyEl) keyEl.classList.toggle('urgent', progress < 0.3);
+            if (elapsed >= state.timerDuration) barFail(keyEl);
+        }
+
+        function tickCircle() {
+            const now = Date.now();
+            if (now - state.lastSpawnTime >= state.spawnInterval) {
+                spawnCircle();
+                state.lastSpawnTime = now;
+            }
+            [...state.activeQTEs].forEach(q => {
+                const elapsed = now - q.startTime;
+                const progress = Math.max(0, 1 - (elapsed / q.duration));
+                if (q.lifeBar) {
+                    q.lifeBar.style.width = (progress * 100) + '%';
+                    q.lifeBar.style.backgroundColor = progress < 0.3 ? '#ef4444' : '#4f46e5';
+                }
+                if (elapsed >= q.duration) circleMiss(q);
+            });
+        }
+
         function endGame() {
-            state.playing = false;
+            clearRuntime();
+            el.gameWin.classList.add('hidden');
             el.gameOver.classList.remove('hidden');
+        }
+
+        function winGame() {
+            clearRuntime();
+            el.gameOver.classList.add('hidden');
+            el.gameWin.classList.remove('hidden');
         }
 
         buildMenu();
